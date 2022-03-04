@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <Windows.h>
 
 using namespace std;
 
@@ -139,6 +140,11 @@ public:
 		aver(physics, math, inf, chem, average);
 	}
 
+	void honors()
+	{
+		if (math >= 9 && inf >= 9 && chem >= 9 && physics >= 9) get_info();
+	}
+
 };
 
 int choose_student(vector<Student> student)
@@ -189,18 +195,39 @@ void changing(vector<Student>& student, vector<string>& surnames)
 		 student.resize(student.size()+1);
 		 surnames.push_back(new_stud);
 		 student[student.size() - 1].enter_info(surnames[surnames.size() - 1]);
+		 break;
 
 	 case 3:
 		 choose = choose_student(student);
 		 student[choose - 1].changing(surnames, choose-1);
+		 break;
+
 	 case 4: break;
+	}
+
+}
+
+void students_letter(vector<Student> students)
+{
+	char letter;
+	cout << "Введите букву, с которой будут начинаться начинаться имена отличников: ";
+	cin >> letter;
+
+	for (int i = 0; i < students.size(); i++)
+	{
+		if (students[i].surname[0] == letter)
+		{
+			students[i].honors();
+		}
 	}
 
 }
 
 int main()
 {
-	setlocale(LC_ALL, "rus");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
 	cout << "Введите фамилии студентов в строку: ";
 	int choose;
 	bool a = true;;
@@ -219,7 +246,7 @@ int main()
 
 	while (a)
 	{
-		cout << "\n1. Просмотреть инфу по студенту 2. Изменить инфу о студенте; 3. 4. Выйти из программы: ";
+		cout << "\n1. Просмотреть инфу по студенту 2. Изменить инфу о студенте; 3.Вывести отличников, фамилии которых начинаются с заданной буквы 4. Выйти из программы: ";
 
 		cin >> choose;
 
@@ -232,6 +259,8 @@ int main()
 			changing(student, surnames);
 			break;
 		case 3:
+			students_letter(student);
+			
 			break;
 		case 4:
 			a = false;
