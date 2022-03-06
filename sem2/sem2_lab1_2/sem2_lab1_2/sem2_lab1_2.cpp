@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <Windows.h>
+#include <fstream>
 
 using namespace std;
 
@@ -70,6 +71,20 @@ public:
 
 		aver(physics, math, inf, chem, average);
 
+	}
+
+	void enter_info(string surname_file, string name_file, string father_name_file, int year_file, int numb_of_groop_file, int physics_file, int math_file, int inf_file, int chem_file)
+	{
+		surname = surname_file;
+		name = name_file;
+		father_name = father_name_file;
+		year = year_file;
+		numb_of_groop = numb_of_groop_file;
+		physics = physics_file;
+		math = math_file;
+		inf = inf_file;
+		chem = chem_file;
+		aver(physics, math, inf, chem, average);
 	}
 
 	void get_info()
@@ -142,7 +157,27 @@ public:
 
 	void honors()
 	{
-		if (math >= 9 && inf >= 9 && chem >= 9 && physics >= 9) get_info();
+		if (math >= 9 && inf >= 9 && chem >= 9 && physics >= 9)
+		{
+			ofstream file("honors.txt", ios::app);
+			if (file.is_open()) cout << "ok";
+			file << surname << " " << name << ' ' << father_name << endl;
+			file << "Год рождения: " << year<<endl;
+			file << "Номер группы: " << numb_of_groop << endl;
+			file << "Физика: " << physics << endl;
+			file << "Математика: " << math << endl;
+			file << "Информатика: " << inf << endl;
+			file << "Химия: " << chem << endl;
+			file.close();
+		}
+	}
+
+	void save_in_file()
+	{
+		ofstream file("save_info.txt", ios::app);
+		file << surname << " " << name << " " << father_name << " " << year << " " << numb_of_groop << " " << physics << " " << math << " " << inf << " " << chem << endl;
+
+		file.close();
 	}
 
 };
@@ -173,12 +208,70 @@ void info(vector<Student> student)
 	student[choose - 1].get_info();
 }
 
+void enter_from_file(vector<Student>& student, vector<string>& surnames)
+{
+	vector<string> file_surname, name, father_name;
+	vector <int> year, numb_of_groop, physics, math, inf, chem;
+	ifstream file_enter;
+	file_enter.open("D:\\уник\\уник проги\\labs_cons\\sem2\\sem2_lab1_2\\enter_info.txt");
+	while (!file_enter.eof())
+	{
+		int a;
+		string str;
+		file_enter >> str;
+		file_surname.push_back(str);
+		surnames.push_back(str);
+		file_enter >> str;
+		name.push_back(str);
+		file_enter >> str;
+		father_name.push_back(str);
+		file_enter >> a;
+		year.push_back(a);
+		file_enter >> a;
+		numb_of_groop.push_back(a);
+		file_enter >> a;
+		physics.push_back(a);
+		file_enter >> a;
+		math.push_back(a);
+		file_enter >> a;
+		inf.push_back(a);
+		file_enter >> a;
+		chem.push_back(a);
+	}
+
+	if (file_surname.size() != 0 /* && file_surname.size() == name.size() == father_name.size() == year.size() == numb_of_groop.size() == physics.size() == math.size() == inf.size() == chem.size()*/)
+	{
+		int b = 0;
+		int elem_beg = student.size();
+		student.resize(student.size() + file_surname.size());
+		for (int i = elem_beg; i < student.size(); i++)
+		{
+			student[i].enter_info(file_surname[b], name[b], father_name[b], year[b], numb_of_groop[b], physics[b], math[b], inf[b], chem[b]); //решить вопрос с индексами
+			b++;
+		}
+	}
+	else cout << "В файле не записан ни один студент или хвататет данных";
+	
+	file_enter.close();
+	
+}
+
+void saving_file(vector<Student> student)
+{
+	ofstream file("save_info.txt");
+	file.close();
+	for (int i = 0; i < student.size(); i++)
+	{
+		student[i].save_in_file();
+	}
+}
+
 void changing(vector<Student>& student, vector<string>& surnames)
 {
 	int choose;
 	string new_stud;
 
-	cout << "\nЧто вы хотите сделать? 1. Удалить студента 2. Добавить студента 3. Изменить информацию о студенте 4. Отмена действия: ";
+	cout << "\nЧто вы хотите сделать? 1. Удалить студента 2. Добавить студента 3. Добавить студента с файла 4. Изменить информацию о студенте 5. Отмена действия: ";
 	cin >> choose;
 
 	switch (choose)
@@ -196,13 +289,17 @@ void changing(vector<Student>& student, vector<string>& surnames)
 		 surnames.push_back(new_stud);
 		 student[student.size() - 1].enter_info(surnames[surnames.size() - 1]);
 		 break;
-
 	 case 3:
+		 enter_from_file(student, surnames);
+		 break;
+
+	 case 4:
 		 choose = choose_student(student);
 		 student[choose - 1].changing(surnames, choose-1);
 		 break;
 
-	 case 4: break;
+	 case 5:
+		 break;
 	}
 
 }
@@ -212,6 +309,8 @@ void students_letter(vector<Student> students)
 	char letter;
 	cout << "Введите букву, с которой будут начинаться начинаться имена отличников: ";
 	cin >> letter;
+	ofstream file("honors.txt");
+	file.close();
 
 	for (int i = 0; i < students.size(); i++)
 	{
@@ -246,7 +345,7 @@ int main()
 
 	while (a)
 	{
-		cout << "\n1. Просмотреть инфу по студенту 2. Изменить инфу о студенте; 3.Вывести отличников, фамилии которых начинаются с заданной буквы 4. Выйти из программы: ";
+		cout << "\n1. Просмотреть инфу по студенту 2. Изменить инфу о студенте; 3.Вывести отличников, фамилии которых начинаются с заданной буквы 4. Записать всю инфу в файл 5. Выйти из программы: ";
 
 		cin >> choose;
 
@@ -260,9 +359,11 @@ int main()
 			break;
 		case 3:
 			students_letter(student);
-			
 			break;
 		case 4:
+			saving_file(student);
+			break;
+		case 5:
 			a = false;
 			break;
 		}
