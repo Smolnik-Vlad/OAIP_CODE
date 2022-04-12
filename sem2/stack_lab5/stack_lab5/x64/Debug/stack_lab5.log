@@ -1,0 +1,3 @@
+﻿  stack_lab5.cpp
+D:\уник\уник проги\labs_cons\sem2\stack_lab5\stack_lab5\stack_lab5.cpp(156,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  stack_lab5.vcxproj -> D:\уник\уник проги\labs_cons\sem2\stack_lab5\x64\Debug\stack_lab5.exe
