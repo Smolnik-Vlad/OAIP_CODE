@@ -102,30 +102,45 @@ public:
 
 	void sort_node()
 	{
-		Node* current_1 = head;
-		Node* current_2;
-		for (current_1; current_1->n_ptr->n_ptr != nullptr; current_1 = current_1->n_ptr)
-		{
-			for (current_2=current_1->n_ptr; current_2->n_ptr != nullptr; current_2 = current_2->n_ptr)
-			{
-				
-				if (current_1->n_ptr->value > current_2->n_ptr->value)
-				{
-					Node* A= current_1->n_ptr;  
-					Node* B = current_2->n_ptr;
-					Node* ptr_1 = current_1->n_ptr->n_ptr;
-					
+		head = new Node(0, head);
 
-					A->n_ptr = B->n_ptr;
-					B->n_ptr = ptr_1;
+		Node* del = head;
+		Node* first = head;
+		Node* second = head;
 
-					current_1->n_ptr = B;
-					current_2->n_ptr = A;
-					
+
+		for (first; first->n_ptr->n_ptr != nullptr; first = first->n_ptr) {
+			for (second = first->n_ptr; second->n_ptr != nullptr; second = second->n_ptr) {
+
+				Node* nodeToSwapA = first->n_ptr;
+				Node* nodeToSwapB = second->n_ptr;
+
+				if (nodeToSwapA->value > nodeToSwapB->value) {
+
+					if (nodeToSwapA->n_ptr != nodeToSwapB) {
+
+						Node* nodeToSwapANextPtr = nodeToSwapA->n_ptr;
+						nodeToSwapA->n_ptr = nodeToSwapB->n_ptr;
+						nodeToSwapB->n_ptr = nodeToSwapANextPtr;
+
+						first->n_ptr = nodeToSwapB;
+						second->n_ptr = nodeToSwapA;
+
+					}
+					else {
+
+						nodeToSwapA->n_ptr = nodeToSwapB->n_ptr;
+						nodeToSwapB->n_ptr = nodeToSwapA;
+
+						first->n_ptr = nodeToSwapB;
+						second = nodeToSwapB;
+					}
 				}
-				
 			}
 		}
+
+		head = del->n_ptr;
+		delete del;
 
 	}
 
